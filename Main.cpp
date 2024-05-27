@@ -4,7 +4,26 @@
 using namespace std;
 using namespace sf;
 
-int ground = 250;
+float offsetX = 0, offsteY = 0;
+
+const int H = 10;
+const int W = 20;
+
+const int ts = 50;
+
+String Map[H] = {
+	"AAAAAAAAAAAAAAAAAAAA",
+	"A                  A",
+	"A                  A",
+	"A                  A",
+	"A                  A",
+	"A                  A",
+	"A       A          A",
+	"A     AAAA         A",
+	"A    AAAA A        A",
+	"AAAAAAAAAAAAAAAAAAAA" };
+
+int ground = 400;
 
 class Player {
 public:
@@ -16,7 +35,9 @@ public:
 
 	Player(Texture& image) {
 		sprite.setTexture(image);
+		rect = FloatRect(1 * ts, 8 * ts, 42, 48);
 		sprite.setTextureRect(IntRect(56, 8, 26, 26));
+		sprite.setScale(2.0, 2.0);
 
 		dx = dy = 0;
 		curFrame = 0;
@@ -24,12 +45,18 @@ public:
 
 	void update(float time) {
 		rect.left += dx * time;
+		Collision(0);
 		if (!onGround)
 		{
 			dy = dy + 0.0005 * time;
 		}
 		rect.top += dy * time;
 		onGround = 0;
+		if (rect.left == 0)
+		{
+			rect.left = ts;
+		}
+		Collision(1);
 		if (rect.top > ground)
 		{
 			rect.top = ground;
@@ -43,15 +70,50 @@ public:
 			sprite.setPosition(rect.left, rect.top);
 			dx = 0;
 	}
-
+	void Collision(float dir)
+	{
+		for (int i = rect.top/ts; i < (rect.top+rect.height)/ts; i++)
+		{
+			for (int j = rect.left/ts; j < (rect.left + rect.width) / ts; j++)
+			{
+				if (Map[i][j] == 'A')
+				{
+					if (dx > 0 && dir == 0)
+					{
+						rect.left = j * ts - rect.width;
+					}
+					if (dx < 0 && dir == 0)
+					{
+						rect.left = j * ts + ts;
+					}
+					if (dy > 0 && dir == 1)
+					{
+						rect.top = i * ts - rect.height;
+						dy = 0;
+						onGround = 1;
+					}
+					if (dy < 0 && dir == 1)
+					{
+						rect.top = i * ts +ts;
+						dy = 0;
+					}
+				}
+			}
+		}
+	}
 };
 
 int main()
 {
-	RenderWindow window(VideoMode(1000, 500), "Mega Man walks");
+	RenderWindow window(VideoMode(1000, 500), "Mega Man");
 	Texture Picture;
 	Picture.loadFromFile("C:/random_game_files/finalsprites.png");
 	Player p (Picture);
+
+	Texture t2;
+	t2.loadFromFile("C:/random_game_files/platforms.png");
+	Sprite platform(t2);
+
 	Clock clock;
 	while (window.isOpen())
 	{
@@ -81,6 +143,21 @@ int main()
 		}
 		p.update(time);
 		window.clear(Color::White);
+
+		for (int i = 0; i < H; i++)
+		{
+			for (int j = 0; j < W; j++)
+			{
+				if (Map[i][j] == 'A')
+				{
+					platform.setTextureRect(IntRect(0, 0, ts, ts));
+				}
+				if (Map[i][j] == ' ') continue;
+				platform.setPosition(j * ts, i * ts);
+				window.draw(platform);
+			}
+		}
+
 		window.draw(p.sprite);
 		window.display();
 	}
