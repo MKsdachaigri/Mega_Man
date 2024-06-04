@@ -34,17 +34,19 @@ public:
 	Sprite sprite;
 	float curFrame;
 	bool life;
+	int hp;
 
 	Player(Texture& image) {
 		sprite.setTexture(image);
-		rect = FloatRect(1 * ts, 8 * ts, 42, 48);
-		sprite.setTextureRect(IntRect(56, 8, 26, 26));
-		sprite.setScale(2.0, 2.0);
+		rect = FloatRect(1 * ts, 8 * ts, 52, 47);
+		sprite.setTextureRect(IntRect(77, 0, 77, 65));
+		sprite.setScale(0.75, 0.75);
 
 		dx = dy = 0;
 		curFrame = 0;
 		rig = 1;
 		life = 1;
+		hp = 3;
 	}
 
 	void update(float time) {
@@ -59,18 +61,50 @@ public:
 		Collision(1);
 		if (life)
 		{
+			if (hp == 0)
+			{
+				life = 0;
+			}
+			curFrame += 0.01 * time;
+			if (curFrame > 9)
+				curFrame -= 8;
 			sprite.setPosition(rect.left - offsetX, rect.top - offsetY);
 
 			sprite.move(0.2 * time, 0);
 			if (dx > 0)
 			{
-				sprite.setTextureRect(IntRect(56, 8, 26, 26));
+				if (dy == 0)
+				{
+					sprite.setTextureRect(IntRect(77 * int(curFrame), 0, 77, 65));
+				}
+				else
+				{
+					sprite.setTextureRect(IntRect(0, 81, 45, 65));
+				}
 				rig = 1;
 			}
 			if (dx < 0)
 			{
-				sprite.setTextureRect(IntRect(56 + 26, 8, -26, 26));
-				rig = 0;
+				if (dy == 0) 
+				{
+					sprite.setTextureRect(IntRect(77 * int(curFrame) + 77, 0, -77, 65));
+				}
+				else 
+				{
+					sprite.setTextureRect(IntRect(45, 81, -45, 65));
+				}
+					rig = 0;
+			}
+		}
+		else
+		{
+			if (rig)
+			{
+				sprite.setTextureRect(IntRect(156, 104, 82, 30));
+			}
+			else
+			{
+				sprite.setTextureRect(IntRect(238, 104, -82, 30));
 			}
 		}
 			sprite.setPosition(rect.left - offsetX, rect.top - offsetY);
@@ -156,13 +190,15 @@ public:
 	float dx, dy;
 	FloatRect rect;
 	Sprite sprite;
+	float curframe;
 	bool life;
 
 	void set(Texture& image, int x, int y)
 	{
 		sprite.setTexture(image);
-		sprite.setScale(3, 3);
+		sprite.setScale(2.5, 2.5);
 		rect = FloatRect(x, y, ts, ts);
+		curframe = 0;
 		dx = 0.1;
 		life = 1;
 	}
@@ -173,13 +209,18 @@ public:
 		Collision();
 		if (life)
 		{
+			curframe += time * 0.0015;
+			if (curframe > 2)
+			{
+				curframe-= 2;
+			}
 			if (dx > 0)
 			{
-				sprite.setTextureRect(IntRect(0, 0, 20, 19));
+				sprite.setTextureRect(IntRect(20 * int(curframe), 0, 20, 19));
 			}
 			else if (dx < 0)
 			{
-				sprite.setTextureRect(IntRect(0 + 20, 0, -20, 19));
+				sprite.setTextureRect(IntRect(20*int(curframe) + 20, 0, -20, 19));
 			}
 		}
 		else
@@ -213,8 +254,9 @@ int main()
 {
 	RenderWindow window(VideoMode(1000, 500), "Mega Man");
 	Texture Picture;
-	Picture.loadFromFile("C:/random_game_files/finalsprites.png");
+	Picture.loadFromFile("C:/random_game_files/mega_man_sprites.png");
 	Player p (Picture);
+	int frame = 0;
 
 	Texture t1;
 	t1.loadFromFile("C:/random_game_files/bullet.png");
@@ -227,7 +269,32 @@ int main()
 	Texture t3;
 	t3.loadFromFile("C:/random_game_files/new_enemy.png");
 	Enemy enemy;
-	enemy.set(t3, 19 * ts, 8 * ts - 20);
+	enemy.set(t3, 10 * ts,  8* ts);
+
+	Texture t4;
+	t4.loadFromFile("C:/random_game_files/health_bar.png");
+	Sprite hp[4];
+	for (int i = 0; i < 4; i++) {
+		hp[i].setTexture(t4);
+		hp[i].setScale(1.5, 2.0);
+		if (i == 3)
+		{
+			hp[i].setTextureRect(IntRect(1, 265, 7, 56));
+		}
+		else if (i == 2)
+		{
+			hp[i].setTextureRect(IntRect(72, 265, 7, 56));
+		}
+		else if (i == 1)
+		{
+			hp[i].setTextureRect(IntRect(171, 265, 7, 56));
+		}
+		else if (i == 0)
+		{
+			hp[i].setTextureRect(IntRect(252, 265, 7, 56));
+		}
+		hp[i].setPosition(75, 75);
+	}
 
 	Clock clock;
 	while (window.isOpen())
@@ -243,15 +310,22 @@ int main()
 				window.close();
 			}
 		}
+		if (!_kbhit())
+			if (p.dy == 0) {
+				if (p.rig)
+					p.sprite.setTextureRect(IntRect(0, 0, 77, 65));
+				else if (!p.rig)
+					p.sprite.setTextureRect(IntRect(77, 0, -77, 65));
+			}
 		if (p.life == 1)
 		{
 			if (Keyboard::isKeyPressed(Keyboard::Left))
 			{
-				p.dx = -0.12;
+				p.dx = -0.135;
 			}
 			if (Keyboard::isKeyPressed(Keyboard::Right))
 			{
-				p.dx = 0.12;
+				p.dx = 0.135;
 			}
 			if (Keyboard::isKeyPressed(Keyboard::X))
 			{
@@ -259,12 +333,21 @@ int main()
 				{
 					p.dy = -0.3;
 					p.onGround = 0;
+					if (p.rig)
+					{
+						p.sprite.setTextureRect(IntRect(0, 81, 45, 65));
+					}
+					else if (!p.rig)
+					{
+						p.sprite.setTextureRect(IntRect(45, 81, -45, 65));
+					}
 				}
 			}
 			if (Keyboard::isKeyPressed(Keyboard::Z))
 			{
-				if (bul.go == 0)
+				if (bul.go == 0 && p.onGround)
 				{
+					frame = 100;
 					if (p.rig)
 					{
 						bul.go = 1;
@@ -295,11 +378,37 @@ int main()
 			bul.dx = -1;
 		}
 
+		if (frame != 0)
+		{
+			if (p.dy == 0)
+			{
+				if (p.rig)
+				{
+					p.sprite.setTextureRect(IntRect(68, 80, 69, 61));
+				}
+				else if (!p.rig)
+				{
+					p.sprite.setTextureRect(IntRect(68 + 69, 80, -69, 61));
+				}
+				frame--;
+			}
+		}
 		if (enemy.life == 1)
 		{
 			if (p.rect.intersects(enemy.rect))
 			{
-				p.life = 0;
+				p.hp--;
+				if (p.hp > 0)
+				{
+					if(p.rig > 0)
+					{
+						p.rect.left -= 100;
+					}
+					else
+					{
+						p.rect.left += 100;
+					}
+				}
 			}
 			if (enemy.rect.left < bul.rect.left && enemy.rect.left + 10 > bul.rect.left &&
 				enemy.rect.top < bul.rect.top && enemy.rect.top + 50 > bul.rect.top && bul.go != 0)
@@ -325,7 +434,8 @@ int main()
 			{
 				if (Map[i][j] == 'A')
 				{
-					platform.setTextureRect(IntRect(0, 0, ts, ts));
+					platform.setTextureRect(IntRect(50, 0, ts-1, ts));
+					platform.setScale(1.045, 1.0);
 				}
 				if (Map[i][j] == ' ') continue;
 				platform.setPosition(j * ts - offsetX, i * ts - offsetY);
@@ -338,6 +448,17 @@ int main()
 		if (bul.go != 0)
 		{
 			window.draw(bul.sprite);
+		}
+		if (p.hp > 0) 
+		{
+			for (int i = 0; i <= p.hp; i++)
+			{
+				window.draw(hp[i]);
+			}
+		}
+		else
+		{
+			window.draw(hp[0]);
 		}
 		window.display();
 	}
