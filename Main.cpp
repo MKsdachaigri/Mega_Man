@@ -7,22 +7,36 @@ using namespace sf;
 
 float offsetX = 0, offsetY = 0;
 
-const int H = 10;
-const int W = 30;
-
+const int H = 24;
+const int W = 75;
+const int vr = 5;
 const int ts = 50;
 
 String Map[H] = {
-	"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-	"A                            A",
-	"A                            A",
-	"A                            A",
-	"A           AAAA             A",
-	"A          A                 A",
-	"A       A                    A",
-	"A     AAAA                   A",
-	"A    AAAAA                   A",
-	"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" };
+	"                                                                          ",
+	"                                                                          ",
+	"                                                                          ",
+	"                                                       PPPPAAAAAAAAAAAAAAA",
+	"I                                                   PPPAAAAAAAAAAAAAAAAAAA",
+	"I            PPP                                  PPAAAAAAAAAAAAAAAAAAAAAA",
+	"I         PPPAAA                         PPP     PAAAAAAAAAAAAAAAAAAAAAAAA",
+	"I        PAAAAAA    PP              P  PPAAA     AAAAAAAAAAAAAAAAAAAAAAAAA",
+	"PPPPPPPPPAAAAAAA    AAPPPPPPPPPPPPPPAPPAAAAA     AAAAAAAAAAAAAAAAAAAAAAAAA",
+	"AAAAAAAAAAAAAAAAKKKKAAAAAAAAAAAAAAAAAAAAAAAA     AAAAAAAAAAAAAAAAAAAAAAAAA",
+	"                                    AAAAAAAA     AAAAAAAAAAAAAAAAAAAAAAAAA",
+	"                                    AAAAAAAA     AAAAAAAAAAAAAAAAAAAAAAAAA",
+	"                                    AAAAAAAA     AAAAAAAAAAAAAAAAAAAAAAAAA",
+	"                                    AAAAAAAA      AAAAAAAAAAAAAAAAAAAAAAAA",  
+	"                                    AAAAAAAA                             A", 
+	"                                    AAAAAAAA                             A",
+	"                                    AAAAAAAA                             A",
+	"                                    AAAAAAAAA                            A",
+	"                                    AAAAAAAAAAA                A     W   A",
+	"                                    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "                                    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "                                    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "                                    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+	"                                    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" };
 
 
 
@@ -33,7 +47,7 @@ public:
 	bool onGround, rig;
 	Sprite sprite;
 	float curFrame;
-	bool life;
+	bool life, win;
 	int hp;
 
 	Player(Texture& image) {
@@ -47,6 +61,7 @@ public:
 		rig = 1;
 		life = 1;
 		hp = 3;
+		win = 0;
 	}
 
 	void update(float time) {
@@ -139,6 +154,78 @@ public:
 						dy = 0;
 					}
 				}
+				if (Map[i][j] == 'P')
+				{
+					if (dx > 0 && dir == 0)
+					{
+						rect.left = j * ts - rect.width;
+					}
+					if (dx < 0 && dir == 0)
+					{
+						rect.left = j * ts + ts;
+					}
+					if (dy > 0 && dir == 1)
+					{
+						rect.top = i * ts - rect.height;
+						dy = 0;
+						onGround = 1;
+					}
+					if (dy < 0 && dir == 1)
+					{
+						rect.top = i * ts + ts;
+						dy = 0;
+					}
+				}
+				if (Map[i][j] == 'I')
+				{
+					if (dx > 0 && dir == 0)
+					{
+						rect.left = j * ts - rect.width;
+					}
+					if (dx < 0 && dir == 0)
+					{
+						rect.left = j * ts + ts;
+					}
+					if (dy > 0 && dir == 1)
+					{
+						rect.top = i * ts - rect.height;
+						dy = 0;
+						onGround = 1;
+					}
+					if (dy < 0 && dir == 1)
+					{
+						rect.top = i * ts + ts;
+						dy = 0;
+					}
+				}
+				if (Map[i][j] == 'K')
+				{
+					life = 0;
+					if (dx > 0 && dir == 0)
+					{
+						rect.left = j * ts - rect.width;
+					}
+					if (dx < 0 && dir == 0)
+					{
+						rect.left = j * ts + ts;
+					}
+					if (dy > 0 && dir == 1)
+					{
+						rect.top = i * ts - rect.height;
+						dy = 0;
+						onGround = 1;
+					}
+					if (dy < 0 && dir == 1)
+					{
+						rect.top = i * ts + ts;
+						dy = 0;
+					}
+				}
+				if (Map[i][j] == 'W')
+				{
+					Map[i][j] = ' ';
+					win = 1;
+				}
 			}
 		}
 	}
@@ -173,7 +260,7 @@ public:
 		{
 			for (int j = rect.left / ts; j < (rect.left + rect.width) / ts; j++)
 			{
-				if (Map[i][j] == 'A')
+				if (Map[i][j] == 'A' || Map[i][j] == 'I' || Map[i][j] == 'W' || Map[i][j] == 'P')
 				{
 					if ((dx > 0 && dir == 0) || (dx < 0 && dir == 0))
 					{
@@ -234,7 +321,7 @@ public:
 	void Collision() {
 		for (int i = rect.top / ts; i < (rect.top + rect.height) / ts; i++)
 			for (int j = rect.left / ts; j < (rect.left + rect.width) / ts; j++)
-				if (Map[i][j] == 'A')
+				if (Map[i][j] == 'A' || Map[i][j] == 'P')
 				{
 					if (dx > 0)
 					{
@@ -254,25 +341,37 @@ int main()
 {
 	RenderWindow window(VideoMode(1000, 500), "Mega Man");
 	Texture Picture;
-	Picture.loadFromFile("C:/random_game_files/mega_man_sprites.png");
+	Picture.loadFromFile("game_files/mega_man_sprites.png");
 	Player p (Picture);
 	int frame = 0;
 
+	Texture f;
+	f.loadFromFile("game_files/background.png");
+	Sprite fon(f);
+
 	Texture t1;
-	t1.loadFromFile("C:/random_game_files/bullet.png");
+	t1.loadFromFile("game_files/bullet.png");
 	Bullet bul(t1);
 
 	Texture t2;
-	t2.loadFromFile("C:/random_game_files/platforms.png");
+	t2.loadFromFile("game_files/platforms.png");
 	Sprite platform(t2);
 
+	Texture s;
+	s.loadFromFile("game_files/spikes.png");
+	Sprite spike(s);
+
+	Texture w;
+	w.loadFromFile("game_files/win_point.png");
+	Sprite win_point(w);
+
 	Texture t3;
-	t3.loadFromFile("C:/random_game_files/new_enemy.png");
+	t3.loadFromFile("game_files/enemy.png");
 	Enemy enemy;
-	enemy.set(t3, 10 * ts,  8* ts);
+	enemy.set(t3, 25 * ts, 7 * ts);
 
 	Texture t4;
-	t4.loadFromFile("C:/random_game_files/health_bar.png");
+	t4.loadFromFile("game_files/health_bar.png");
 	Sprite hp[4];
 	for (int i = 0; i < 4; i++) {
 		hp[i].setTexture(t4);
@@ -364,6 +463,11 @@ int main()
 				}
 			}
 		}
+		else if (p.life == 0)
+		{
+			cout << " You are dead ";
+			return 0;
+		}
 		if (bul.go == 0)
 		{
 			bul.rect.left = p.rect.left;
@@ -393,32 +497,32 @@ int main()
 				frame--;
 			}
 		}
-		if (enemy.life == 1)
-		{
-			if (p.rect.intersects(enemy.rect))
+			if (enemy.life == 1)
 			{
-				p.hp--;
-				if (p.hp > 0)
+				if (p.rect.intersects(enemy.rect))
 				{
-					if(p.rig > 0)
+					p.hp--;
+					if (p.hp > 0)
 					{
-						p.rect.left -= 100;
-					}
-					else
-					{
-						p.rect.left += 100;
+						if (p.rig > 0)
+						{
+							p.rect.left -= 100;
+						}
+						else
+						{
+							p.rect.left += 100;
+						}
 					}
 				}
-			}
-			if (enemy.rect.left < bul.rect.left && enemy.rect.left + 10 > bul.rect.left &&
-				enemy.rect.top < bul.rect.top && enemy.rect.top + 50 > bul.rect.top && bul.go != 0)
-			{
-				enemy.life = 0;
-				bul.go = 0;
-			}
+				if (enemy.rect.left < bul.rect.left && enemy.rect.left + 10 > bul.rect.left &&
+					enemy.rect.top < bul.rect.top && enemy.rect.top + 50 > bul.rect.top && bul.go != 0)
+				{
+					enemy.life = 0;
+					bul.go = 0;
+				}
 		}
 
-		if(p.rect.left > 500 && p.rect.left < 1000)
+		if(p.rect.left > 500 && p.rect.left < 3200)
 		offsetX = p.rect.left - 500;
 		if(p.rect.top > 500)
 		offsetY = p.rect.top - 250;
@@ -427,6 +531,7 @@ int main()
 		bul.update(time);
 		enemy.update(time);
 		window.clear(Color::White);
+		window.draw(fon);
 
 		for (int i = 0; i < H; i++)
 		{
@@ -437,12 +542,37 @@ int main()
 					platform.setTextureRect(IntRect(50, 0, ts-1, ts));
 					platform.setScale(1.045, 1.0);
 				}
+				if (Map[i][j] == 'K')
+				{
+					spike.setTextureRect(IntRect(0, 0, ts, ts));
+				}
+				if (Map[i][j] == 'W')
+				{
+					win_point.setTextureRect(IntRect(0, 0, 300, 300));
+					win_point.setScale(0.2, 0.2);
+				}
+				if (Map[i][j] == 'P')
+				{
+					platform.setTextureRect(IntRect(0, 0, ts, ts));
+				}
 				if (Map[i][j] == ' ') continue;
-				platform.setPosition(j * ts - offsetX, i * ts - offsetY);
+				if (Map[i][j] == 'A' || Map[i][j] == 'P')
+				{
+					platform.setPosition(j * ts - offsetX, i * ts - offsetY);
+				}
+				if (Map[i][j] == 'K')
+				{
+					spike.setPosition(j * ts - offsetX, i * ts - offsetY);
+				}
+				if (Map[i][j] == 'W')
+				{
+					win_point.setPosition(j* ts - offsetX, i* ts - offsetY);
+				}
 				window.draw(platform);
+				window.draw(spike);
+				window.draw(win_point);
 			}
 		}
-
 		window.draw(p.sprite);
 		window.draw(enemy.sprite);
 		if (bul.go != 0)
@@ -460,8 +590,11 @@ int main()
 		{
 			window.draw(hp[0]);
 		}
+		if (p.win)
+		{
+			cout << " You won! ";
+				return 0;
+		}
 		window.display();
 	}
-	return 0;
-	//commment
 }
