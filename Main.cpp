@@ -33,6 +33,7 @@ public:
 	bool onGround, rig;
 	Sprite sprite;
 	float curFrame;
+	bool life;
 
 	Player(Texture& image) {
 		sprite.setTexture(image);
@@ -43,6 +44,7 @@ public:
 		dx = dy = 0;
 		curFrame = 0;
 		rig = 1;
+		life = 1;
 	}
 
 	void update(float time) {
@@ -55,8 +57,9 @@ public:
 		rect.top += dy * time;
 		onGround = 0;
 		Collision(1);
-
-		sprite.setPosition(rect.left - offsetX, rect.top - offsetY);
+		if (life)
+		{
+			sprite.setPosition(rect.left - offsetX, rect.top - offsetY);
 
 			sprite.move(0.2 * time, 0);
 			if (dx > 0)
@@ -69,8 +72,10 @@ public:
 				sprite.setTextureRect(IntRect(56 + 26, 8, -26, 26));
 				rig = 0;
 			}
+		}
 			sprite.setPosition(rect.left - offsetX, rect.top - offsetY);
 			dx = 0;
+		
 	}
 	void Collision(float dir)
 	{
@@ -146,6 +151,64 @@ public:
 	}
 };
 
+class Enemy {
+public:
+	float dx, dy;
+	FloatRect rect;
+	Sprite sprite;
+	bool life;
+
+	void set(Texture& image, int x, int y)
+	{
+		sprite.setTexture(image);
+		sprite.setScale(3, 3);
+		rect = FloatRect(x, y, ts, ts);
+		dx = 0.1;
+		life = 1;
+	}
+
+	void update(float time) {
+		rect.left += dx * time;
+
+		Collision();
+		if (life)
+		{
+			if (dx > 0)
+			{
+				sprite.setTextureRect(IntRect(0, 0, 20, 19));
+			}
+			else if (dx < 0)
+			{
+				sprite.setTextureRect(IntRect(0 + 20, 0, -20, 19));
+			}
+		}
+		else
+		{
+			sprite.setTextureRect(IntRect(0, 0, 0, 0));
+		}
+		sprite.setPosition(rect.left - offsetX, rect.top - offsetY);
+	}
+
+
+	void Collision() {
+		for (int i = rect.top / ts; i < (rect.top + rect.height) / ts; i++)
+			for (int j = rect.left / ts; j < (rect.left + rect.width) / ts; j++)
+				if (Map[i][j] == 'A')
+				{
+					if (dx > 0)
+					{
+						rect.left = j * ts - rect.width;
+						dx *= -1;
+					}
+					else if (dx < 0)
+					{
+						rect.left = j * ts + ts;
+						dx *= -1;
+					}
+				}
+	}
+};
+
 int main()
 {
 	RenderWindow window(VideoMode(1000, 500), "Mega Man");
@@ -161,6 +224,11 @@ int main()
 	t2.loadFromFile("C:/random_game_files/platforms.png");
 	Sprite platform(t2);
 
+	Texture t3;
+	t3.loadFromFile("C:/random_game_files/new_enemy.png");
+	Enemy enemy;
+	enemy.set(t3, 19 * ts, 8 * ts - 20);
+
 	Clock clock;
 	while (window.isOpen())
 	{
@@ -175,38 +243,41 @@ int main()
 				window.close();
 			}
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Left))
+		if (p.life == 1)
 		{
-			p.dx = -0.12;
-		}
-		if (Keyboard::isKeyPressed(Keyboard::Right))
-		{
-			p.dx = 0.12;
-		}
-		if (Keyboard::isKeyPressed(Keyboard::X))
-		{
-			if (p.onGround)
+			if (Keyboard::isKeyPressed(Keyboard::Left))
 			{
-				p.dy = -0.3;
-				p.onGround = 0;
+				p.dx = -0.12;
 			}
-		}
-		if (Keyboard::isKeyPressed(Keyboard::Z))
-		{
-			if (bul.go == 0)
+			if (Keyboard::isKeyPressed(Keyboard::Right))
 			{
-				if (p.rig)
+				p.dx = 0.12;
+			}
+			if (Keyboard::isKeyPressed(Keyboard::X))
+			{
+				if (p.onGround)
 				{
-					bul.go = 1;
-					bul.rect.left = p.rect.left + 67;
-					bul.rect.top = p.rect.top + 20;
+					p.dy = -0.3;
+					p.onGround = 0;
 				}
-				else
+			}
+			if (Keyboard::isKeyPressed(Keyboard::Z))
+			{
+				if (bul.go == 0)
 				{
-					bul.go = 2;
-					bul.rect.left = p.rect.left - 12;
-					bul.rect.top = p.rect.top + 18;
+					if (p.rig)
+					{
+						bul.go = 1;
+						bul.rect.left = p.rect.left + 67;
+						bul.rect.top = p.rect.top + 20;
+					}
+					else
+					{
+						bul.go = 2;
+						bul.rect.left = p.rect.left - 12;
+						bul.rect.top = p.rect.top + 18;
 
+					}
 				}
 			}
 		}
@@ -224,7 +295,19 @@ int main()
 			bul.dx = -1;
 		}
 
-
+		if (enemy.life == 1)
+		{
+			if (p.rect.intersects(enemy.rect))
+			{
+				p.life = 0;
+			}
+			if (enemy.rect.left < bul.rect.left && enemy.rect.left + 10 > bul.rect.left &&
+				enemy.rect.top < bul.rect.top && enemy.rect.top + 50 > bul.rect.top && bul.go != 0)
+			{
+				enemy.life = 0;
+				bul.go = 0;
+			}
+		}
 
 		if(p.rect.left > 500 && p.rect.left < 1000)
 		offsetX = p.rect.left - 500;
@@ -233,6 +316,7 @@ int main()
 
 		p.update(time);
 		bul.update(time);
+		enemy.update(time);
 		window.clear(Color::White);
 
 		for (int i = 0; i < H; i++)
@@ -250,6 +334,7 @@ int main()
 		}
 
 		window.draw(p.sprite);
+		window.draw(enemy.sprite);
 		if (bul.go != 0)
 		{
 			window.draw(bul.sprite);

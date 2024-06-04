@@ -1,38 +1,64 @@
 ﻿  Main.cpp
-C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(53,12): warning C4244: =: преобразование "double" в "float", возможна потеря данных
-C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(61,20): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
-C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(77,14): warning C4244: инициализация: преобразование "T" в "int", возможна потеря данных
+C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(55,12): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(64,20): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
+C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(82,14): warning C4244: инициализация: преобразование "T" в "int", возможна потеря данных
           with
           [
               T=float
           ]
-C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(79,15): warning C4244: инициализация: преобразование "T" в "int", возможна потеря данных
+C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(84,15): warning C4244: инициализация: преобразование "T" в "int", возможна потеря данных
           with
           [
               T=float
           ]
-C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(89,26): warning C4244: =: преобразование "int" в "T", возможна потеря данных
+C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(94,26): warning C4244: =: преобразование "int" в "T", возможна потеря данных
           with
           [
               T=float
           ]
-C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(99,25): warning C4244: =: преобразование "int" в "T", возможна потеря данных
+C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(104,25): warning C4244: =: преобразование "int" в "T", возможна потеря данных
           with
           [
               T=float
           ]
-C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(133,14): warning C4244: инициализация: преобразование "T" в "int", возможна потеря данных
+C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(138,14): warning C4244: инициализация: преобразование "T" в "int", возможна потеря данных
           with
           [
               T=float
           ]
-C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(135,15): warning C4244: инициализация: преобразование "T" в "int", возможна потеря данных
+C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(140,15): warning C4244: инициализация: преобразование "T" в "int", возможна потеря данных
           with
           [
               T=float
           ]
-C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(167,14): warning C4244: инициализация: преобразование "sf::Int64" в "float", возможна потеря данных
-C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(180,12): warning C4305: =: усечение из "double" в "float"
-C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(184,11): warning C4305: =: усечение из "double" в "float"
-C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(190,13): warning C4305: =: усечение из "double" в "float"
+C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(165,23): warning C4244: аргумент: преобразование "int" в "T", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(165,20): warning C4244: аргумент: преобразование "int" в "T", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(166,8): warning C4305: =: усечение из "double" в "float"
+C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(194,14): warning C4244: инициализация: преобразование "T" в "int", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(195,15): warning C4244: инициализация: преобразование "T" в "int", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(205,26): warning C4244: =: преобразование "int" в "T", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(235,14): warning C4244: инициализация: преобразование "sf::Int64" в "float", возможна потеря данных
+C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(250,13): warning C4305: =: усечение из "double" в "float"
+C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(254,12): warning C4305: =: усечение из "double" в "float"
+C:\Users\Kudra\Desktop\MKMega_Man\Main.cpp(260,14): warning C4305: =: усечение из "double" в "float"
   Mega Man.vcxproj -> C:\Users\Kudra\Desktop\MKMega_Man\x64\Debug\Mega Man.exe
